@@ -2,7 +2,15 @@ import streamlit as st
 import sqlite3
 import datetime
 import requests
+from parsel import Selector
 
+def processlink(link):
+    resp = requests.get(link)
+    sl = Selector(resp.text)
+    pdf_url = sl.xpath('//a[@class = "pdf-link"]/@href').extract_first()
+    return pdf_url
+
+    
 def query(selected_date):
     st.write(selected_date)
     qtype = [0,1,2,3,4]
@@ -28,6 +36,7 @@ def query(selected_date):
                     stockName = "None"
                     infoCode = j["encodeUrl"]
                     link = 'https://data.eastmoney.com/report/zw_macresearch.jshtml?encodeUrl={0}'.format(infoCode)
+                    link = processlink(link)
 
                 st.write('{0} {1} {2} {3}'.format(stockName,industryName,title,link))
                 
