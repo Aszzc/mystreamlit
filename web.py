@@ -10,7 +10,7 @@ def processlink(link):
     pdf_url = sl.xpath('//a[@class = "pdf-link"]/@href').extract_first()
     return pdf_url
 
- 
+@ 
 def query(selected_date):
     st.write(selected_date)
     qtype = [0,1,2,3,4]
