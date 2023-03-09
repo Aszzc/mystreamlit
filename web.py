@@ -23,7 +23,7 @@ def query(selected_date):
     st.write(selected_date)
     c1,c2,c3 = st.columns(3, gap="small")
     
-    qtype = [0,1,2,3,4]
+    qtype = [0,1,2,3]
     dbtype = {"0":"list","1":"list","2":"list","3":"jg","4":"jg",}
     
     for i in qtype:
