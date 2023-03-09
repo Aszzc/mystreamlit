@@ -1,5 +1,4 @@
 import streamlit as st
-import sqlite3
 import datetime
 import requests
 from parsel import Selector
@@ -18,7 +17,7 @@ def processlink(link):
 
 
 
-@st.cache_data    
+@st.cache_data(ttl=600)   
 def query(selected_date):
     
     st.write(selected_date)
