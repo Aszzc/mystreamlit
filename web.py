@@ -46,7 +46,7 @@ def func_date_change(date):
 
 def download():
     data = query(st.session_state['selected_time'])
-    data = json.dumps(data,ensure_ascii=False)
+    data = json.dumps(data,ensure_ascii=False,indent=2)
     return data
 
 
