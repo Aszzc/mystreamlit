@@ -2,6 +2,7 @@ import requests
 import streamlit as st
 import datetime
 import json
+import sqlite3
 
 @st.cache_data(ttl=600)
 def query(date):
@@ -34,27 +35,47 @@ def query(date):
             else:run_flag = False
     return data
 
-
 def func_date_change(date):
     data = query(date)
     c1,c2,c3 = st.columns(3)
 
     for i in data:
-        if i['type'] == 0:c1.write(i['data'])
-        elif i['type'] == 1:c2.write(i['data'])
-        else:c3.write(i['data'])
+        if i['type'] == 0:
+            c1.write(i['data'])
+        elif i['type'] == 1:
+            c2.write(i['data'])
+        else:
+            c3.write(i['data'])
 
 def download():
     data = query(st.session_state['selected_time'])
     data = json.dumps(data,ensure_ascii=False,indent=2)
     return data
 
+def writr2sql():
+    data = query(st.session_state['selected_time'])
+    conn = sqlite3.connect('dfcf.db')
+    c = conn.cursor()
+    #
+    try:
+        sql = 'CREATE TABLE dfcf (type ANY,date ANY,data ANY);'
+        c.execute(sql)
+    except:
+        print('table exsits')
+    #
+    for i in data:
+        sql = 'INSERT INTO dfcf (type,date,data) VALUES ("{0}","{1}","{2}")'.format(i['type'],st.session_state['selected_time'],i['data'])
+        c.execute(sql)
+
+    conn.commit()
+    conn.close()
+
 
 st.set_page_config(page_title='东方财富研报查询', page_icon=None, layout="wide")
 
-
-
 if 'selected_time' not in st.session_state:
     st.session_state['selected_time'] = datetime.date.today()
+
 st.sidebar.date_input('选择查询日期',key='selected_time',on_change = func_date_change(st.session_state['selected_time']))
 st.sidebar.download_button('下载当前查询数据',data=download(),file_name='{0}.txt'.format(st.session_state['selected_time']))
+st.sidebar.button('保存到数据库',on_click=writr2sql())
